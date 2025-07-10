@@ -1,0 +1,582 @@
+# Digital Experience Platform (DXP) - Business & Product Requirements
+
+## 📋 Business Requirements Document (BRD)
+
+### 1. Executive Summary
+
+**Platform Name:** ModularDXP (Digital Experience Platform)
+**Type:** Multi-tenant SaaS Platform
+**Technology Stack:** React.js, Node.js, Express.js
+**Target Market:** Enterprises, SMBs, Development Teams, Individual Developers
+
+ModularDXP is a cloud-based digital experience platform inspired by Liferay DXP that enables organizations and individuals to build, deploy, and manage modern digital experiences including websites, portals, intranets, and custom applications through a modular, component-based architecture using modern web technologies.
+
+### 2. Business Objectives
+
+**Primary Goals:**
+- Enable businesses and individuals to build modular digital experiences: websites, portals, intranets, and dashboards
+- Create a scalable SaaS platform with multi-workspace/project management capabilities
+- Provide modular development capabilities through "portlets" (React micro-widgets)
+- Support flexible content and UI management via drag-and-drop portlets
+- Enable rapid deployment of enterprise-grade digital solutions through modern tech stack
+- Support theming, page/site layout, and asset/document management
+- Enable developer extensibility through plug-in micro-modules and custom portlets
+
+**Success Metrics:**
+- 10,000+ active users within 18 months
+- 95% platform uptime
+- <2 second page load times per page
+- 90% customer satisfaction score
+- Support for 10,000+ concurrent users
+
+### 3. Business Context & Market Analysis
+
+**Market Opportunity:**
+- Digital experience platform market valued at $12.6B (2023)
+- Growing demand for low-code/no-code solutions with developer extensibility
+- Enterprise digital transformation initiatives
+- Remote work driving intranet/portal needs
+- Modern tech stack adoption (React/Node.js) over legacy Java solutions
+
+**Competitive Landscape:**
+- Liferay DXP (Java-based, complex, expensive)
+- Drupal (PHP-based, developer-heavy)
+- WordPress VIP (Limited enterprise features)
+- Contentful (Headless CMS focus)
+
+**Competitive Advantages:**
+- Modern React/Node.js stack vs Java-based competitors
+- Intuitive drag-and-drop interface with portlet system
+- True multi-tenancy with workspace/project organization
+- Modular portlet architecture with event-driven communication
+- Built-in CRUD generator (Service Builder)
+- Developer-friendly with modern tooling and extensibility
+
+### 4. Target Personas
+
+**Primary Users:**
+1. **Enterprise IT Managers** - Need scalable, secure digital platforms
+2. **Frontend Developers** - Want modern React-based development experience
+3. **Content Managers** - Require user-friendly content management with portlets
+4. **Small Business Owners** - Need professional websites/portals quickly
+5. **Individual Developers** - Want to build and deploy digital experiences
+
+**Secondary Users:**
+1. **System Administrators** - Platform management and security
+2. **End Users** - Consume digital experiences built on the platform
+3. **Plugin Developers** - Create and distribute custom portlets
+
+---
+
+## 📋 Product Requirements Document (PRD)
+
+### 1. Product Overview
+
+**Vision:** To democratize digital experience creation through a modular, developer-friendly platform that scales from simple websites to complex enterprise portals using modern React/Node.js technologies.
+
+**Mission:** Enable organizations and individuals to build, deploy, and manage sophisticated digital experiences without the complexity of traditional enterprise platforms like Liferay DXP.
+
+### 2. Core Platform Architecture
+
+#### 2.1 Multi-Tenant SaaS Structure
+```
+Organization Level
+├── Workspaces (Organization/tenant containers)
+│   ├── Projects (Individual digital experiences)
+│   │   ├── Sites (Website/Portal instances)
+│   │   │   ├── Pages (Individual page instances)
+│   │   │   │   ├── Portlets (Modular React widgets)
+│   │   │   │   └── Themes (Visual styling & layout)
+│   │   │   └── Assets (Content, media, documents)
+│   │   └── Settings (Project-specific configuration)
+│   └── Members (Workspace users and permissions)
+└── Activity Logs (Audit trail and user actions)
+```
+
+#### 2.2 Modular Portlet Architecture
+- **Portlets** = Independent React micro-widgets/modules
+- **Event-driven communication** between portlets via event bus
+- **Hot-swappable** modules for dynamic page composition
+- **Reusable** across pages and projects
+- **Configurable** via UI with props and styles
+- **Versioning system** for portlet updates and plugin management
+- **Plugin extensibility** - developers can create custom portlets as npm-like packages
+
+### 3. Core Modules and Features
+
+#### 3.1 Authentication & Authorization
+**User Management:**
+- User registration/login with forgot password
+- OAuth2 and JWT-based authentication with refresh tokens
+- Role-based access control (RBAC)
+- Multi-factor authentication (MFA)
+- Single Sign-On (SSO) integration
+- Invite teammates to workspaces
+
+**Security Features:**
+- Enterprise-grade encryption
+- XSS and CSRF protection
+- API rate limiting
+- Security scanning and monitoring
+- Audit trail for all changes
+- Activity logs (per user, per workspace)
+
+#### 3.2 Multi-Tenant SaaS Layer
+**Workspace Management:**
+- Create/rename/delete workspaces
+- Workspace switching interface
+- Team collaboration tools
+- Member invitation and role management
+- Workspace-level settings and branding
+
+**Project Management:**
+- Create projects within workspaces
+- Project types: Website, Portal, Intranet, App, Dashboard
+- Environment management (dev/staging/prod)
+- Project-level settings (theme, layout, assets)
+- Custom domain mapping and SSL certificates
+
+#### 3.3 Portal Engine
+**Portal Features:**
+- Visual container for drag-and-drop portlets
+- Each project can have portal layout (dashboard, home page, landing)
+- Navigation between pages within portal
+- Page templates and reusable layouts
+- Responsive design with mobile optimization
+
+#### 3.4 Portlet System (Modular Components)
+**Built-in Portlets:**
+- **Content Display** (Rich text, HTML, markdown)
+- **Navigation** (Menus, breadcrumbs, sitemap)
+- **Forms** (Contact, survey, custom forms with validation)
+- **Media Gallery** (Images, videos, carousels)
+- **Blog/News** (Article management with categories)
+- **Document Library** (File sharing and organization)
+- **User Profile** (Account management and preferences)
+- **Search** (Content search with filters)
+- **Calendar** (Events, scheduling, booking)
+- **Analytics Dashboard** (Usage statistics and insights)
+- **Chart/Data Visualization** (Charts, graphs, metrics)
+- **List Display** (Dynamic data lists with pagination)
+
+**Custom Portlets:**
+- React component development framework
+- Portlet SDK and CLI tools
+- Props and state management
+- Event communication system via event bus
+- Third-party integrations
+- Upload/install modules into platform
+- Versioning support for custom components
+- Plugin marketplace for distribution
+
+#### 3.5 Site & Page Management
+**Site Structure:**
+- Sites = collection of pages
+- Hierarchical page organization
+- URL structure management
+- Navigation menu builder
+- SEO optimization tools
+- Page visibility controls (public/private)
+
+**Page Builder:**
+- Drag-and-drop layout builder
+- Grid-based layout system with sections
+- Assign portlets to page sections
+- Real-time preview with device switching
+- Save templates for reuse
+- Version control and rollback
+- Undo/redo functionality
+
+#### 3.6 Themes Engine
+**Theme Management:**
+- Create/manage themes per project/site
+- Theme = styles, fonts, layout behavior templates
+- React-based theme components
+- CSS-in-JS styling system
+- Theme inheritance and customization
+- Support custom CSS and global layout template injection
+- Dark mode & RTL language support
+- Brand guidelines enforcement
+
+**Design Tools:**
+- Visual theme editor
+- Color palette management
+- Typography controls
+- Component style overrides
+- Upload themes via JSON or UI configuration
+
+#### 3.7 Asset Framework
+**Asset Management:**
+- Centralized media/document manager
+- Upload/manage files (images, videos, PDFs, documents)
+- Organize into folders/tags with search
+- Embed assets into portlets
+- Asset versioning and optimization
+- CDN integration for global delivery
+
+#### 3.8 Service Builder (CRUD Generator)
+**Auto-Generation Features:**
+- Admin tool to define data models/schemas
+- Schema editor via UI/JSON configuration
+- Auto-generates backend REST APIs
+- Auto-generates admin table UI for data management
+- CRUD operations with validation
+- Example: Create "JobBoard" schema → get CRUD APIs and Admin interface
+- Relationship management between entities
+- Custom field types and validation rules
+
+#### 3.9 Developer Extensibility
+**Plugin System:**
+- Create custom portlets as npm-like packages
+- Upload/install modules into platform
+- Versioning support for custom components
+- Plugin marketplace for sharing/distribution
+- SDK and CLI tools for development
+- Hot deployment capabilities
+- Documentation and testing frameworks
+
+#### 3.10 Admin Dashboard
+**Management Features:**
+- Manage users, workspaces, projects
+- View usage analytics and insights
+- Control portal-wide configuration
+- System health monitoring
+- Performance metrics and optimization
+- Plugin management and updates
+
+#### 3.11 Content Management System
+**Content Types:**
+- Structured content (JSON-based schemas)
+- Rich text content with WYSIWYG editor
+- Media assets with metadata
+- Reusable content blocks and templates
+- Multi-language content support
+- Content localization tools
+
+**Content Features:**
+- Version control and history
+- Workflow and approval processes
+- Content scheduling and publishing
+- Content relationships and references
+- Search and filtering capabilities
+
+### 4. Technical Architecture
+
+#### 4.1 Frontend Stack
+- **React 18+** with hooks, concurrent features, and Suspense
+- **Next.js** for server-side rendering and routing
+- **TypeScript** for type safety and developer experience
+- **Tailwind CSS** for utility-first styling
+- **React Query** for data fetching and caching
+- **Zustand** for state management
+- **React DnD** for drag-and-drop functionality
+- **Monaco Editor** for code editing
+
+#### 4.2 Backend Stack
+- **Node.js** with Express.js framework
+- **TypeScript** for consistent typing across stack
+- **PostgreSQL** for primary relational database
+- **Redis** for caching, sessions, and real-time features
+- **MongoDB** for content and document storage
+- **WebSocket** for real-time collaboration
+- **JWT** for authentication with refresh tokens
+- **Multer** for file uploads and processing
+
+#### 4.3 Infrastructure
+- **Docker** containerization for development and deployment
+- **Kubernetes** for orchestration and scaling
+- **AWS/Azure** cloud services integration
+- **CDN** for global content delivery
+- **Load balancing** for high availability
+- **Auto-scaling** for performance optimization
+- **Monitoring** and alerting systems
+
+#### 4.4 APIs & Integration
+- **RESTful APIs** for all platform operations
+- **GraphQL** for flexible data queries
+- **WebSocket** for real-time communication
+- **Webhook** system for external integrations
+- **Plugin architecture** for third-party services
+- **OAuth2** for external service authentication
+
+### 5. Development Framework
+
+#### 5.1 Portlet Development Kit (PDK)
+```javascript
+// Example Portlet Structure
+export interface PortletConfig {
+  id: string;
+  name: string;
+  version: string;
+  description: string;
+  category: string;
+  icon: string;
+  settings: PortletSettings;
+  dependencies: string[];
+  events: PortletEvents;
+}
+
+export interface PortletProps {
+  config: PortletConfig;
+  data: any;
+  context: PortletContext;
+  eventBus: EventBus;
+  onUpdate: (data: any) => void;
+  onEvent: (event: string, payload: any) => void;
+}
+
+// Event Bus for Portlet Communication
+export interface EventBus {
+  emit(event: string, payload: any): void;
+  on(event: string, callback: Function): void;
+  off(event: string, callback: Function): void;
+}
+```
+
+#### 5.2 CLI Tools
+```bash
+# Create new portlet
+dxp create portlet --name MyPortlet --type react
+
+# Deploy portlet
+dxp deploy portlet --path ./my-portlet
+
+# Manage projects
+dxp project create --name "My Website" --type website
+dxp project deploy --env production
+
+# Generate CRUD from schema
+dxp generate crud --schema ./job-board.json
+```
+
+### 6. Functional Requirements
+
+#### 6.1 User & Workspace Management
+- Create account, login, forgot password flow
+- Create/rename/delete workspaces with validation
+- Invite users to workspace with role assignment
+- Switch between workspaces seamlessly
+- Workspace settings and customization
+
+#### 6.2 Project Management
+- Create projects within workspace context
+- Project types: Website, Intranet, App, Dashboard
+- Each project has independent site/pages structure
+- Project-level settings (theme, layout, assets)
+- Project templates and scaffolding
+
+#### 6.3 Site/Page Builder
+- Drag-and-drop layout builder with grid system
+- Assign portlets to page sections
+- Visual page composition with real-time preview
+- Save and reuse page templates
+- Responsive design controls
+
+#### 6.4 Portlet System
+- Browse and select from portlet library
+- Drag-and-drop portlets onto pages
+- Configure portlet properties via UI
+- Portlet communication via event bus
+- Real-time portlet updates and rendering
+
+#### 6.5 Themes Engine
+- Create/manage themes with visual editor
+- Apply themes to projects/sites
+- Theme inheritance and customization
+- Custom CSS injection and overrides
+- Dark mode and RTL support
+
+#### 6.6 Asset Library
+- Upload/manage files with organization
+- Folder structure and tagging system
+- Asset search and filtering
+- Embed assets into portlets
+- Asset optimization and CDN delivery
+
+#### 6.7 CRUD Generator (Service Builder)
+- Define data models via visual schema editor
+- Auto-generate REST APIs from schemas
+- Auto-generate admin UI for data management
+- Handle relationships between entities
+- Custom validation and business rules
+
+#### 6.8 Activity & Audit Logs
+- Track all user actions and changes
+- Logs organized by page, user, workspace
+- Role-based visibility of audit trails
+- Export logs for compliance
+- Real-time activity monitoring
+
+### 7. Non-Functional Requirements
+
+| Requirement | Description |
+|-------------|-------------|
+| **Performance** | Page load time < 2 seconds, portlet rendering < 100ms |
+| **Scalability** | Support 10,000+ concurrent users with auto-scaling |
+| **Security** | OAuth2, JWT, 2FA, enterprise-grade encryption |
+| **Extensibility** | Plugin architecture with versioning support |
+| **API First** | All features accessible via RESTful APIs |
+| **Mobile Responsive** | Mobile-first design with touch optimization |
+| **Localization** | Multi-language support with RTL languages |
+| **Availability** | 99.9% uptime with disaster recovery |
+| **Accessibility** | WCAG 2.1 AA compliance |
+| **Browser Support** | Modern browsers (Chrome, Firefox, Safari, Edge) |
+
+### 8. User Experience Requirements
+
+#### 8.1 Dashboard Interface
+- Clean, modern design following Material Design principles
+- Workspace/project switching in header navigation
+- Quick access to recent projects and templates
+- Usage analytics and insights dashboard
+- Notification center for system updates
+
+#### 8.2 Page Builder Interface
+- **Left Sidebar**: Portlet library with categories and search
+- **Central Canvas**: Drag-and-drop layout with grid system
+- **Right Sidebar**: Selected portlet properties and settings
+- **Top Toolbar**: Page actions, preview modes, publish controls
+- **Bottom Panel**: Layer management and page structure
+
+#### 8.3 Portlet Marketplace
+- Browse available portlets by category
+- Install/uninstall portlets with one click
+- Portlet ratings and reviews
+- Developer information and documentation
+- Version management and updates
+
+#### 8.4 Admin Settings
+- Theme selector with preview
+- Permission roles and user management
+- Workspace settings and branding
+- System configuration and monitoring
+- Plugin management and updates
+
+### 9. Integration Requirements
+
+#### 9.1 Third-Party Services
+- **Analytics**: Google Analytics, Adobe Analytics
+- **CRM**: Salesforce, HubSpot integration
+- **Email**: SendGrid, Mailchimp for notifications
+- **Payment**: Stripe, PayPal for e-commerce portlets
+- **Storage**: AWS S3, Azure Blob Storage for assets
+- **CDN**: CloudFlare, AWS CloudFront for performance
+
+#### 9.2 Enterprise Integrations
+- **Identity Providers**: Active Directory, Okta, SAML
+- **Databases**: MySQL, PostgreSQL, MongoDB connectors
+- **APIs**: REST, GraphQL, SOAP integration
+- **Messaging**: Slack, Microsoft Teams notifications
+- **File Systems**: SharePoint, Google Drive integration
+
+### 10. Security & Compliance
+
+#### 10.1 Authentication & Authorization
+- Multi-factor authentication (MFA)
+- Single Sign-On (SSO) with enterprise providers
+- Role-based access control (RBAC)
+- OAuth2 and JWT token management
+- Session management and timeout controls
+
+#### 10.2 Data Security
+- End-to-end encryption for data in transit and at rest
+- Regular security audits and penetration testing
+- GDPR and CCPA compliance tools
+- Data backup and disaster recovery
+- PCI DSS compliance for payment processing
+
+#### 10.3 Platform Security
+- XSS and CSRF protection
+- SQL injection prevention
+- API rate limiting and throttling
+- Content Security Policy (CSP)
+- Regular security updates and patches
+
+### 11. Development Roadmap
+
+#### 11.1 Phase 1: Core Platform (Months 1-6)
+- Multi-tenant architecture with workspaces/projects
+- Basic portlet system with drag-and-drop
+- User authentication and authorization
+- Simple page builder with grid layout
+- Essential portlets (content, navigation, forms)
+- Basic theme engine
+
+#### 11.2 Phase 2: Advanced Features (Months 7-12)
+- Advanced portlet communication via event bus
+- CRUD generator (Service Builder)
+- Asset management system
+- Advanced theme customization
+- Plugin extensibility framework
+- Performance optimization
+
+#### 11.3 Phase 3: Enterprise & Scale (Months 13-18)
+- Enterprise security features
+- Advanced analytics and reporting
+- Plugin marketplace
+- Mobile optimization
+- Global deployment and CDN
+- Advanced integration capabilities
+
+### 12. System Prompt for Development
+
+**Build a modular, SaaS digital experience platform (DXP)** using **React for frontend** and **Node.js/Express for backend**. The system mimics Liferay DXP and supports:
+
+- **User registration** and **multi-workspace/project management**
+- **Drag-and-drop portlet system** where portlets are independent React micro-widgets
+- **Event-driven communication** between portlets via event bus
+- **Multi-tenant architecture** with workspaces containing multiple projects
+- **Project types**: websites, intranets, dashboards, applications
+- **Theming engine** with visual customization
+- **Page/site management** with templates and layouts
+- **Asset management** with centralized media library
+- **CRUD generator** ("Service Builder") to auto-create APIs and admin UI
+- **Plugin extensibility** - developers can create and install custom portlets
+- **Activity logs** and audit trails for all user actions
+- **RESTful APIs** for all platform operations
+- **Modern tech stack**: React 18+, Node.js, TypeScript, PostgreSQL, Redis
+
+Ensure the system is **modular**, **scalable**, **secure**, and **customizable**. Portlets should be **installable**, **themable**, and **dynamically rendered** inside pages. Provide comprehensive **REST APIs** for all entities and support **future extensibility** through plugin architecture.
+
+### 13. Success Metrics & KPIs
+
+#### 13.1 Technical Metrics
+- Page load performance (< 2 seconds)
+- System uptime (99.9%)
+- API response times (< 200ms)
+- Portlet rendering speed (< 100ms)
+- Concurrent user capacity (10,000+)
+
+#### 13.2 User Engagement
+- Daily/Monthly Active Users
+- Project creation and deployment rates
+- Portlet usage and adoption statistics
+- Session duration and pages per session
+- User retention and churn rates
+
+#### 13.3 Platform Health
+- Error rates and debugging metrics
+- System resource utilization
+- Database performance metrics
+- CDN and asset delivery performance
+- Plugin ecosystem growth
+
+### 14. Risk Assessment & Mitigation
+
+#### 14.1 Technical Risks
+- **Scalability challenges** → Cloud-native architecture with auto-scaling
+- **Security vulnerabilities** → Security-first development with regular audits
+- **Performance bottlenecks** → Performance monitoring and optimization
+- **Data consistency** → Robust database design and transaction management
+
+#### 14.2 Development Risks
+- **Complexity management** → Modular architecture with clear separation of concerns
+- **Plugin ecosystem** → Comprehensive SDK and developer documentation
+- **Browser compatibility** → Progressive enhancement and polyfills
+- **Mobile responsiveness** → Mobile-first design approach
+
+### 15. Conclusion
+
+ModularDXP represents a modern evolution of digital experience platforms, combining the enterprise capabilities of Liferay DXP with the developer experience and performance of modern React/Node.js technologies. The platform's modular portlet architecture, combined with intuitive user interfaces, comprehensive SaaS features, and extensive customization capabilities, positions it as a compelling alternative to traditional Java-based enterprise platforms.
+
+Success will depend on delivering exceptional user experience, maintaining high performance standards, building a robust plugin ecosystem, and providing comprehensive developer tools and documentation.
