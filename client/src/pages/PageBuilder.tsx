@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "@/hooks/useAuth";
 import { TopNavigation } from "@/components/layout/TopNavigation";
-import { PageBuilder as PageBuilderComponent } from "@/components/builder/PageBuilder";
+import { AdvancedPageBuilder } from "@/components/builder/AdvancedPageBuilder";
 import { CreateWorkspaceModal } from "@/components/modals/CreateWorkspaceModal";
 import { isUnauthorizedError } from "@/lib/authUtils";
 import { useToast } from "@/hooks/use-toast";
@@ -122,7 +122,7 @@ export default function PageBuilder() {
       />
       
       <div className="pt-16 h-screen">
-        <PageBuilderComponent
+        <AdvancedPageBuilder
           onSave={handleSave}
         />
       </div>
