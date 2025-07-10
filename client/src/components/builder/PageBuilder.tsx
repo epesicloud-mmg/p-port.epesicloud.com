@@ -110,7 +110,7 @@ export function PageBuilder({ pageId, onSave }: PageBuilderProps) {
         {/* Canvas Area */}
         <div className="flex-1 bg-gray-50 overflow-auto">
           <DragDropCanvas
-            portlets={pagePortlets}
+            pagePortlets={pagePortlets}
             onPortletDrop={handlePortletDrop}
             onPortletUpdate={handlePortletUpdate}
             onPortletRemove={handlePortletRemove}
