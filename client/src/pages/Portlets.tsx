@@ -49,6 +49,7 @@ export default function Portlets() {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
   const [isCreateOpen, setIsCreateOpen] = useState(false);
+  const [editingPortlet, setEditingPortlet] = useState<Portlet | null>(null);
   const { toast } = useToast();
 
   const { data: portlets, isLoading } = useQuery({
@@ -65,12 +66,41 @@ export default function Portlets() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/portlets"] });
       setIsCreateOpen(false);
+      form.reset();
       toast({
         title: "Success",
         description: "Portlet created successfully",
       });
     },
     onError: (error) => {
+      console.error("Create portlet error:", error);
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive",
+      });
+    },
+  });
+
+  const updatePortletMutation = useMutation({
+    mutationFn: async (data: PortletFormData & { id: string }) => {
+      const { id, ...updateData } = data;
+      return await apiRequest(`/api/portlets/${id}`, {
+        method: "PUT",
+        body: JSON.stringify(updateData),
+      });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/portlets"] });
+      setEditingPortlet(null);
+      form.reset();
+      toast({
+        title: "Success",
+        description: "Portlet updated successfully",
+      });
+    },
+    onError: (error) => {
+      console.error("Update portlet error:", error);
       toast({
         title: "Error",
         description: error.message,
@@ -117,7 +147,35 @@ export default function Portlets() {
   });
 
   const onSubmit = async (data: PortletFormData) => {
-    createPortletMutation.mutate(data);
+    console.log("Form data:", data);
+    console.log("Form errors:", form.formState.errors);
+    
+    if (editingPortlet) {
+      updatePortletMutation.mutate({ ...data, id: editingPortlet.id });
+    } else {
+      createPortletMutation.mutate(data);
+    }
+  };
+
+  const handleEdit = (portlet: Portlet) => {
+    setEditingPortlet(portlet);
+    form.reset({
+      name: portlet.name,
+      type: portlet.type,
+      category: portlet.category,
+      description: portlet.description || "",
+      version: portlet.version,
+      icon: portlet.icon || "",
+      config: portlet.config || {},
+      isBuiltIn: portlet.isBuiltIn,
+      isActive: portlet.isActive,
+    });
+  };
+
+  const handleCloseDialog = () => {
+    setIsCreateOpen(false);
+    setEditingPortlet(null);
+    form.reset();
   };
 
   const filteredPortlets = portlets?.filter((portlet: Portlet) => {
@@ -143,7 +201,7 @@ export default function Portlets() {
               <h1 className="text-2xl font-bold text-gray-900">Portlets</h1>
               <p className="text-gray-600">Manage your reusable portlet components</p>
             </div>
-            <Dialog open={isCreateOpen} onOpenChange={setIsCreateOpen}>
+            <Dialog open={isCreateOpen || !!editingPortlet} onOpenChange={handleCloseDialog}>
               <DialogTrigger asChild>
                 <Button className="flex items-center gap-2">
                   <Plus size={16} />
@@ -152,7 +210,9 @@ export default function Portlets() {
               </DialogTrigger>
               <DialogContent className="max-w-2xl">
                 <DialogHeader>
-                  <DialogTitle>Create New Portlet</DialogTitle>
+                  <DialogTitle>
+                    {editingPortlet ? "Edit Portlet" : "Create New Portlet"}
+                  </DialogTitle>
                 </DialogHeader>
                 <Form {...form}>
                   <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
@@ -236,25 +296,43 @@ export default function Portlets() {
                         )}
                       />
                     </div>
-                    <FormField
-                      control={form.control}
-                      name="description"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Description</FormLabel>
-                          <FormControl>
-                            <Textarea placeholder="Enter portlet description" {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
+                    <div className="grid grid-cols-2 gap-4">
+                      <FormField
+                        control={form.control}
+                        name="description"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Description</FormLabel>
+                            <FormControl>
+                              <Textarea placeholder="Enter portlet description" {...field} />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      <FormField
+                        control={form.control}
+                        name="icon"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Icon</FormLabel>
+                            <FormControl>
+                              <Input placeholder="fas fa-widget" {...field} />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
                     <div className="flex justify-end gap-2">
-                      <Button type="button" variant="outline" onClick={() => setIsCreateOpen(false)}>
+                      <Button type="button" variant="outline" onClick={handleCloseDialog}>
                         Cancel
                       </Button>
-                      <Button type="submit" disabled={createPortletMutation.isPending}>
-                        {createPortletMutation.isPending ? "Creating..." : "Create Portlet"}
+                      <Button type="submit" disabled={createPortletMutation.isPending || updatePortletMutation.isPending}>
+                        {editingPortlet
+                          ? updatePortletMutation.isPending ? "Updating..." : "Update Portlet"
+                          : createPortletMutation.isPending ? "Creating..." : "Create Portlet"
+                        }
                       </Button>
                     </div>
                   </form>
@@ -330,7 +408,12 @@ export default function Portlets() {
                           </div>
                         </div>
                         <div className="flex items-center gap-1">
-                          <Button size="sm" variant="ghost" className="p-1 h-8 w-8">
+                          <Button 
+                            size="sm" 
+                            variant="ghost" 
+                            className="p-1 h-8 w-8"
+                            onClick={() => handleEdit(portlet)}
+                          >
                             <Edit size={14} />
                           </Button>
                           {!portlet.isBuiltIn && (

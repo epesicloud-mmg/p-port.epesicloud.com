@@ -387,18 +387,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const portletData = insertPortletSchema.parse(req.body);
       const portlet = await storage.createPortlet(portletData);
       
-      await storage.createActivityLog({
-        userId,
-        action: 'create',
-        resource: 'portlet',
-        resourceId: portlet.id,
-        details: { name: portlet.name, type: portlet.type },
-      });
+      // Activity log creation is optional for portlets since they're not workspace-specific
+      try {
+        await storage.createActivityLog({
+          userId,
+          action: 'create',
+          resource: 'portlet',
+          resourceId: portlet.id,
+          details: { name: portlet.name, type: portlet.type },
+        });
+      } catch (logError) {
+        console.warn("Failed to create activity log for portlet:", logError);
+      }
       
       res.json(portlet);
     } catch (error) {
       console.error("Error creating portlet:", error);
-      res.status(400).json({ message: "Failed to create portlet" });
+      res.status(400).json({ message: "Failed to create portlet", error: error instanceof Error ? error.message : String(error) });
     }
   });
 
@@ -421,18 +426,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const updates = insertPortletSchema.partial().parse(req.body);
       const portlet = await storage.updatePortlet(req.params.id, updates);
       
-      await storage.createActivityLog({
-        userId,
-        action: 'update',
-        resource: 'portlet',
-        resourceId: req.params.id,
-        details: updates,
-      });
+      // Activity log creation is optional for portlets since they're not workspace-specific
+      try {
+        await storage.createActivityLog({
+          userId,
+          action: 'update',
+          resource: 'portlet',
+          resourceId: req.params.id,
+          details: updates,
+        });
+      } catch (logError) {
+        console.warn("Failed to create activity log for portlet:", logError);
+      }
       
       res.json(portlet);
     } catch (error) {
       console.error("Error updating portlet:", error);
-      res.status(400).json({ message: "Failed to update portlet" });
+      res.status(400).json({ message: "Failed to update portlet", error: error instanceof Error ? error.message : String(error) });
     }
   });
 
@@ -450,12 +460,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       await storage.deletePortlet(req.params.id);
       
-      await storage.createActivityLog({
-        userId,
-        action: 'delete',
-        resource: 'portlet',
-        resourceId: req.params.id,
-      });
+      // Activity log creation is optional for portlets since they're not workspace-specific
+      try {
+        await storage.createActivityLog({
+          userId,
+          action: 'delete',
+          resource: 'portlet',
+          resourceId: req.params.id,
+        });
+      } catch (logError) {
+        console.warn("Failed to create activity log for portlet:", logError);
+      }
       
       res.json({ message: "Portlet deleted successfully" });
     } catch (error) {
