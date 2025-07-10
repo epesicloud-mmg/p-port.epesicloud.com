@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "@/hooks/useAuth";
 import { TopNavigation } from "@/components/layout/TopNavigation";
-import { SidebarNavigation } from "@/components/layout/SidebarNavigation";
+import SidebarNavigation from "@/components/layout/SidebarNavigation";
 import { CreateWorkspaceModal } from "@/components/modals/CreateWorkspaceModal";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";

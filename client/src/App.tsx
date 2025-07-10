@@ -11,6 +11,7 @@ import Projects from "@/pages/Projects";
 import PageBuilder from "@/pages/PageBuilder";
 import ServiceBuilder from "@/pages/ServiceBuilder";
 import Assets from "@/pages/Assets";
+import Portlets from "@/pages/Portlets";
 
 function Router() {
   const { isAuthenticated, isLoading } = useAuth();
@@ -23,7 +24,7 @@ function Router() {
         <>
           <Route path="/" component={Dashboard} />
           <Route path="/projects" component={Projects} />
-          <Route path="/portlets" component={() => <div>Portlets Page - Coming Soon</div>} />
+          <Route path="/portlets" component={Portlets} />
           <Route path="/themes" component={() => <div>Themes Page - Coming Soon</div>} />
           <Route path="/assets" component={Assets} />
           <Route path="/page-builder" component={PageBuilder} />

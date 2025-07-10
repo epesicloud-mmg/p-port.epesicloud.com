@@ -402,6 +402,68 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.get('/api/portlets/:id', isAuthenticated, async (req: any, res) => {
+    try {
+      const portlet = await storage.getPortletById(req.params.id);
+      if (!portlet) {
+        return res.status(404).json({ message: "Portlet not found" });
+      }
+      res.json(portlet);
+    } catch (error) {
+      console.error("Error fetching portlet:", error);
+      res.status(500).json({ message: "Failed to fetch portlet" });
+    }
+  });
+
+  app.put('/api/portlets/:id', isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const updates = insertPortletSchema.partial().parse(req.body);
+      const portlet = await storage.updatePortlet(req.params.id, updates);
+      
+      await storage.createActivityLog({
+        userId,
+        action: 'update',
+        resource: 'portlet',
+        resourceId: req.params.id,
+        details: updates,
+      });
+      
+      res.json(portlet);
+    } catch (error) {
+      console.error("Error updating portlet:", error);
+      res.status(400).json({ message: "Failed to update portlet" });
+    }
+  });
+
+  app.delete('/api/portlets/:id', isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const portlet = await storage.getPortletById(req.params.id);
+      if (!portlet) {
+        return res.status(404).json({ message: "Portlet not found" });
+      }
+      
+      if (portlet.isBuiltIn) {
+        return res.status(400).json({ message: "Cannot delete built-in portlets" });
+      }
+      
+      await storage.deletePortlet(req.params.id);
+      
+      await storage.createActivityLog({
+        userId,
+        action: 'delete',
+        resource: 'portlet',
+        resourceId: req.params.id,
+      });
+      
+      res.json({ message: "Portlet deleted successfully" });
+    } catch (error) {
+      console.error("Error deleting portlet:", error);
+      res.status(500).json({ message: "Failed to delete portlet" });
+    }
+  });
+
   // Page portlet routes
   app.get('/api/pages/:pageId/portlets', isAuthenticated, async (req: any, res) => {
     try {
@@ -676,94 +738,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Initialize built-in portlets
-  const builtInPortlets = [
-    {
-      name: 'Content Display',
-      type: 'content-display',
-      category: 'Content',
-      version: '1.0.0',
-      description: 'Display rich text and HTML content',
-      icon: 'fas fa-align-left',
-      config: {
-        content: '',
-        showTitle: true,
-        allowHtml: true,
-      },
-      isBuiltIn: true,
-    },
-    {
-      name: 'Navigation',
-      type: 'navigation',
-      category: 'Layout',
-      version: '1.0.0',
-      description: 'Site navigation menu',
-      icon: 'fas fa-bars',
-      config: {
-        menuType: 'horizontal',
-        showIcons: false,
-        maxDepth: 2,
-      },
-      isBuiltIn: true,
-    },
-    {
-      name: 'Contact Form',
-      type: 'contact-form',
-      category: 'Forms',
-      version: '1.0.0',
-      description: 'Contact form with validation',
-      icon: 'fas fa-envelope',
-      config: {
-        fields: ['name', 'email', 'message'],
-        submitText: 'Send Message',
-        showLabels: true,
-      },
-      isBuiltIn: true,
-    },
-    {
-      name: 'Media Gallery',
-      type: 'media-gallery',
-      category: 'Media',
-      version: '1.0.0',
-      description: 'Display images and videos',
-      icon: 'fas fa-images',
-      config: {
-        layout: 'grid',
-        columns: 3,
-        showCaptions: true,
-      },
-      isBuiltIn: true,
-    },
-    {
-      name: 'User Profile',
-      type: 'user-profile',
-      category: 'User',
-      version: '1.0.0',
-      description: 'Display user profile information',
-      icon: 'fas fa-user',
-      config: {
-        showAvatar: true,
-        showEmail: false,
-        showJoinDate: true,
-      },
-      isBuiltIn: true,
-    },
-  ];
 
-  // Seed built-in portlets
-  app.post('/api/seed-portlets', isAuthenticated, async (req: any, res) => {
-    try {
-      const portlets = [];
-      for (const portletData of builtInPortlets) {
-        const portlet = await storage.createPortlet(portletData);
-        portlets.push(portlet);
-      }
-      res.json({ message: 'Built-in portlets seeded successfully', portlets });
-    } catch (error) {
-      console.error("Error seeding portlets:", error);
-      res.status(500).json({ message: "Failed to seed portlets" });
-    }
-  });
 
   const httpServer = createServer(app);
   return httpServer;

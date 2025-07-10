@@ -19,7 +19,7 @@ interface SidebarNavigationProps {
   currentWorkspaceId?: string;
 }
 
-export function SidebarNavigation({ 
+export default function SidebarNavigation({ 
   projectCount = 0, 
   currentWorkspaceId 
 }: SidebarNavigationProps) {

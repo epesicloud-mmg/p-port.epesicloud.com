@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "@/hooks/useAuth";
 import { TopNavigation } from "@/components/layout/TopNavigation";
-import { SidebarNavigation } from "@/components/layout/SidebarNavigation";
+import SidebarNavigation from "@/components/layout/SidebarNavigation";
 import { StatsCard } from "@/components/dashboard/StatsCard";
 import { RecentProjects } from "@/components/dashboard/RecentProjects";
 import { QuickActions } from "@/components/dashboard/QuickActions";
