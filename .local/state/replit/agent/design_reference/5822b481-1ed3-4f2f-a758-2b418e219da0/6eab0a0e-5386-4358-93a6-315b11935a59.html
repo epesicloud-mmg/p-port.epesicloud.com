@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ModularDXP - Digital Experience Platform</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'inter': ['Inter', 'sans-serif']
+                    },
+                    colors: {
+                        primary: '#1976d2',
+                        secondary: '#424242',
+                        accent: '#00acc1',
+                        success: '#388e3c',
+                        warning: '#f57c00',
+                        error: '#d32f2f'
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-gray-50 font-inter">
+    <!-- @COMPONENT: TopNavigation -->
+    <nav class="bg-white border-b border-gray-200 px-4 py-3 fixed w-full top-0 z-50">
+        <div class="flex items-center justify-between">
+            <div class="flex items-center space-x-4">
+                <div class="flex items-center space-x-2">
+                    <div class="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
+                        <i class="fas fa-cube text-white text-sm"></i>
+                    </div>
+                    <span class="text-xl font-semibold text-gray-900">ModularDXP</span>
+                </div>
+                
+                <!-- Workspace Selector -->
+                <div class="relative">
+                    <button data-event="click:toggleWorkspaceDropdown" class="flex items-center space-x-2 px-3 py-2 rounded-lg bg-gray-100 hover:bg-gray-200 transition-colors">
+                        <span class="text-sm font-medium text-gray-700" data-bind="currentWorkspace.name">Enterprise Corp</span>
+                        <i class="fas fa-chevron-down text-gray-500 text-xs"></i>
+                    </button>
+                    <!-- Workspace Dropdown -->
+                    <div class="absolute left-0 mt-2 w-64 bg-white rounded-lg shadow-lg border border-gray-200 hidden" id="workspaceDropdown">
+                        <div class="p-2">
+                            <div class="text-xs font-medium text-gray-500 uppercase tracking-wide px-3 py-2">Workspaces</div>
+                            <!-- @MAP: workspaces.map(workspace => ( -->
+                            <div class="flex items-center space-x-3 px-3 py-2 rounded-lg hover:bg-gray-50 cursor-pointer" data-mock="true">
+                                <div class="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
+                                    <span class="text-white text-xs font-medium">EC</span>
+                                </div>
+                                <div class="flex-1">
+                                    <div class="text-sm font-medium text-gray-900">Enterprise Corp</div>
+                                    <div class="text-xs text-gray-500">5 projects</div>
+                                </div>
+                                <i class="fas fa-check text-primary text-sm"></i>
+                            </div>
+                            <div class="flex items-center space-x-3 px-3 py-2 rounded-lg hover:bg-gray-50 cursor-pointer" data-mock="true">
+                                <div class="w-8 h-8 bg-accent rounded-lg flex items-center justify-center">
+                                    <span class="text-white text-xs font-medium">SU</span>
+                                </div>
+                                <div class="flex-1">
+                                    <div class="text-sm font-medium text-gray-900">Startup Inc</div>
+                                    <div class="text-xs text-gray-500">2 projects</div>
+                                </div>
+                            </div>
+                            <!-- @END_MAP )) -->
+                            <div class="border-t border-gray-200 mt-2 pt-2">
+                                <button class="w-full flex items-center space-x-2 px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-lg">
+                                    <i class="fas fa-plus text-gray-400"></i>
+                                    <span>Create Workspace</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="flex items-center space-x-4">
+                <!-- Search -->
+                <div class="relative">
+                    <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 text-sm"></i>
+                    <input type="text" placeholder="Search projects, pages..." class="pl-10 pr-4 py-2 w-64 bg-gray-100 rounded-lg border-0 focus:bg-white focus:ring-2 focus:ring-primary/20 focus:outline-none text-sm">
+                </div>
+                
+                <!-- Notifications -->
+                <button class="relative p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg">
+                    <i class="fas fa-bell text-lg"></i>
+                    <span class="absolute -top-1 -right-1 w-5 h-5 bg-error rounded-full flex items-center justify-center text-white text-xs">3</span>
+                </button>
+                
+                <!-- Profile -->
+                <div class="relative">
+                    <button data-event="click:toggleProfileDropdown" class="flex items-center space-x-2 p-2 rounded-lg hover:bg-gray-100">
+                        <div class="w-8 h-8 bg-gradient-to-br from-primary to-accent rounded-full flex items-center justify-center">
+                            <span class="text-white text-sm font-medium" data-bind="user.initials">JD</span>
+                        </div>
+                        <i class="fas fa-chevron-down text-gray-400 text-xs"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+    <!-- @END_COMPONENT: TopNavigation -->
+    
+    <div class="flex pt-16">
+        <!-- @COMPONENT: SidebarNavigation -->
+        <aside class="w-64 bg-white border-r border-gray-200 h-screen fixed left-0 top-16 overflow-y-auto">
+            <div class="p-4">
+                <div class="space-y-1">
+                    <a href="#" class="flex items-center space-x-3 px-3 py-2 text-sm font-medium text-primary bg-primary/10 rounded-lg">
+                        <i class="fas fa-home text-primary"></i>
+                        <span>Dashboard</span>
+                    </a>
+                    <a href="#" class="flex items-center space-x-3 px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 rounded-lg">
+                        <i class="fas fa-folder text-gray-400"></i>
+                        <span>Projects</span>
+                        <span class="ml-auto bg-gray-200 text-gray-600 text-xs px-2 py-1 rounded-full" data-bind="projects.count">5</span>
+                    </a>
+                    <a href="#" class="flex items-center space-x-3 px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 rounded-lg">
+                        <i class="fas fa-th-large text-gray-400"></i>
+                        <span>Portlets</span>
+                    </a>
+                    <a href="#" class="flex items-center space-x-3 px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 rounded-lg">
+                        <i class="fas fa-palette text-gray-400"></i>
+                        <span>Themes</span>
+                    </a>
+                    <a href="#" class="flex items-center space-x-3 px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 rounded-lg">
+                        <i class="fas fa-images text-gray-400"></i>
+                        <span>Assets</span>
+                    </a>
+                </div>
+                
+                <div class="mt-8">
+                    <div class="text-xs font-medium text-gray-500 uppercase tracking-wide px-3 py-2">Tools</div>
+                    <div class="space-y-1">
+                        <a href="#" class="flex items-center space-x-3 px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 rounded-lg">
+                            <i class="fas fa-edit text-gray-400"></i>
+                            <span>Page Builder</span>
+                        </a>
+                        <a href="#" class="flex items-center space-x-3 px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 rounded-lg">
+                            <i class="fas fa-database text-gray-400"></i>
+                            <span>Service Builder</span>
+                        </a>
+                        <a href="#" class="flex items-center space-x-3 px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 rounded-lg">
+                            <i class="fas fa-chart-bar text-gray-400"></i>
+                            <span>Analytics</span>
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="mt-8">
+                    <div class="text-xs font-medium text-gray-500 uppercase tracking-wide px-3 py-2">Settings</div>
+                    <div class="space-y-1">
+                        <a href="#" class="flex items-center space-x-3 px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 rounded-lg">
+                            <i class="fas fa-users text-gray-400"></i>
+                            <span>Team</span>
+                        </a>
+                        <a href="#" class="flex items-center space-x-3 px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 rounded-lg">
+                            <i class="fas fa-cog text-gray-400"></i>
+                            <span>Workspace Settings</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </aside>
+        <!-- @END_COMPONENT: SidebarNavigation -->
+        
+        <!-- @COMPONENT: MainContent -->
+        <main class="flex-1 ml-64 p-6">
+            <!-- Dashboard Header -->
+            <div class="flex items-center justify-between mb-6">
+                <div>
+                    <h1 class="text-2xl font-semibold text-gray-900">Dashboard</h1>
+                    <p class="text-gray-600 mt-1">Welcome back! Here's what's happening with your projects.</p>
+                </div>
+                <div class="flex items-center space-x-3">
+                    <button class="px-4 py-2 text-sm font-medium text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50">
+                        <i class="fas fa-download mr-2"></i>
+                        Export Data
+                    </button>
+                    <button class="px-4 py-2 text-sm font-medium text-white bg-primary rounded-lg hover:bg-primary/90">
+                        <i class="fas fa-plus mr-2"></i>
+                        New Project
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Stats Cards -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                <div class="bg-white rounded-lg p-6 border border-gray-200 hover:shadow-lg transition-shadow">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm font-medium text-gray-600">Active Projects</p>
+                            <p class="text-2xl font-bold text-gray-900 mt-1" data-bind="stats.activeProjects">5</p>
+                        </div>
+                        <div class="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center">
+                            <i class="fas fa-folder text-primary text-xl"></i>
+                        </div>
+                    </div>
+                    <div class="mt-4 flex items-center text-sm">
+                        <span class="text-success font-medium">+2</span>
+                        <span class="text-gray-600 ml-1">this month</span>
+                    </div>
+                </div>
+                
+                <div class="bg-white rounded-lg p-6 border border-gray-200 hover:shadow-lg transition-shadow">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm font-medium text-gray-600">Total Pages</p>
+                            <p class="text-2xl font-bold text-gray-900 mt-1" data-bind="stats.totalPages">24</p>
+                        </div>
+                        <div class="w-12 h-12 bg-accent/10 rounded-lg flex items-center justify-center">
+                            <i class="fas fa-file-alt text-accent text-xl"></i>
+                        </div>
+                    </div>
+                    <div class="mt-4 flex items-center text-sm">
+                        <span class="text-success font-medium">+8</span>
+                        <span class="text-gray-600 ml-1">this week</span>
+                    </div>
+                </div>
+                
+                <div class="bg-white rounded-lg p-6 border border-gray-200 hover:shadow-lg transition-shadow">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm font-medium text-gray-600">Active Portlets</p>
+                            <p class="text-2xl font-bold text-gray-900 mt-1" data-bind="stats.activePortlets">47</p>
+                        </div>
+                        <div class="w-12 h-12 bg-success/10 rounded-lg flex items-center justify-center">
+                            <i class="fas fa-th-large text-success text-xl"></i>
+                        </div>
+                    </div>
+                    <div class="mt-4 flex items-center text-sm">
+                        <span class="text-success font-medium">+12</span>
+                        <span class="text-gray-600 ml-1">this month</span>
+                    </div>
+                </div>
+                
+                <div class="bg-white rounded-lg p-6 border border-gray-200 hover:shadow-lg transition-shadow">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm font-medium text-gray-600">Team Members</p>
+                            <p class="text-2xl font-bold text-gray-900 mt-1" data-bind="stats.teamMembers">12</p>
+                        </div>
+                        <div class="w-12 h-12 bg-warning/10 rounded-lg flex items-center justify-center">
+                            <i class="fas fa-users text-warning text-xl"></i>
+                        </div>
+                    </div>
+                    <div class="mt-4 flex items-center text-sm">
+                        <span class="text-success font-medium">+3</span>
+                        <span class="text-gray-600 ml-1">this month</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+                <!-- Recent Projects -->
+                <div class="bg-white rounded-lg border border-gray-200">
+                    <div class="p-6 border-b border-gray-200">
+                        <div class="flex items-center justify-between">
+                            <h2 class="text-lg font-semibold text-gray-900">Recent Projects</h2>
+                            <button class="text-sm text-primary hover:text-primary/80">View All</button>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <div class="space-y-4">
+                            <!-- @MAP: recentProjects.map(project => ( -->
+                            <div class="flex items-center space-x-4 p-4 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer" data-mock="true">
+                                <div class="w-12 h-12 bg-gradient-to-br from-primary to-accent rounded-lg flex items-center justify-center">
+                                    <i class="fas fa-globe text-white"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <h3 class="font-medium text-gray-900">Corporate Website</h3>
+                                    <p class="text-sm text-gray-600">Website • Updated 2 hours ago</p>
+                                </div>
+                                <div class="flex items-center space-x-2">
+                                    <div class="w-2 h-2 bg-success rounded-full"></div>
+                                    <span class="text-sm text-gray-600">Live</span>
+                                </div>
+                            </div>
+                            <div class="flex items-center space-x-4 p-4 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer" data-mock="true">
+                                <div class="w-12 h-12 bg-gradient-to-br from-accent to-primary rounded-lg flex items-center justify-center">
+                                    <i class="fas fa-users text-white"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <h3 class="font-medium text-gray-900">Employee Portal</h3>
+                                    <p class="text-sm text-gray-600">Portal • Updated 1 day ago</p>
+                                </div>
+                                <div class="flex items-center space-x-2">
+                                    <div class="w-2 h-2 bg-warning rounded-full"></div>
+                                    <span class="text-sm text-gray-600">Draft</span>
+                                </div>
+                            </div>
+                            <div class="flex items-center space-x-4 p-4 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer" data-mock="true">
+                                <div class="w-12 h-12 bg-gradient-to-br from-success to-accent rounded-lg flex items-center justify-center">
+                                    <i class="fas fa-chart-line text-white"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <h3 class="font-medium text-gray-900">Analytics Dashboard</h3>
+                                    <p class="text-sm text-gray-600">Dashboard • Updated 3 days ago</p>
+                                </div>
+                                <div class="flex items-center space-x-2">
+                                    <div class="w-2 h-2 bg-success rounded-full"></div>
+                                    <span class="text-sm text-gray-600">Live</span>
+                                </div>
+                            </div>
+                            <!-- @END_MAP )) -->
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Quick Actions -->
+                <div class="bg-white rounded-lg border border-gray-200">
+                    <div class="p-6 border-b border-gray-200">
+                        <h2 class="text-lg font-semibold text-gray-900">Quick Actions</h2>
+                    </div>
+                    <div class="p-6">
+                        <div class="grid grid-cols-2 gap-4">
+                            <button class="p-4 border-2 border-dashed border-gray-300 rounded-lg hover:border-primary hover:bg-primary/5 transition-colors group">
+                                <div class="text-center">
+                                    <div class="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mx-auto mb-3 group-hover:bg-primary/20">
+                                        <i class="fas fa-plus text-primary text-xl"></i>
+                                    </div>
+                                    <h3 class="font-medium text-gray-900">New Project</h3>
+                                    <p class="text-sm text-gray-600 mt-1">Create a new digital experience</p>
+                                </div>
+                            </button>
+                            
+                            <button class="p-4 border-2 border-dashed border-gray-300 rounded-lg hover:border-accent hover:bg-accent/5 transition-colors group">
+                                <div class="text-center">
+                                    <div class="w-12 h-12 bg-accent/10 rounded-lg flex items-center justify-center mx-auto mb-3 group-hover:bg-accent/20">
+                                        <i class="fas fa-th-large text-accent text-xl"></i>
+                                    </div>
+                                    <h3 class="font-medium text-gray-900">Add Portlet</h3>
+                                    <p class="text-sm text-gray-600 mt-1">Install new functionality</p>
+                                </div>
+                            </button>
+                            
+                            <button class="p-4 border-2 border-dashed border-gray-300 rounded-lg hover:border-success hover:bg-success/5 transition-colors group">
+                                <div class="text-center">
+                                    <div class="w-12 h-12 bg-success/10 rounded-lg flex items-center justify-center mx-auto mb-3 group-hover:bg-success/20">
+                                        <i class="fas fa-palette text-success text-xl"></i>
+                                    </div>
+                                    <h3 class="font-medium text-gray-900">Create Theme</h3>
+                                    <p class="text-sm text-gray-600 mt-1">Design custom styles</p>
+                                </div>
+                            </button>
+                            
+                            <button class="p-4 border-2 border-dashed border-gray-300 rounded-lg hover:border-warning hover:bg-warning/5 transition-colors group">
+                                <div class="text-center">
+                                    <div class="w-12 h-12 bg-warning/10 rounded-lg flex items-center justify-center mx-auto mb-3 group-hover:bg-warning/20">
+                                        <i class="fas fa-users text-warning text-xl"></i>
+                                    </div>
+                                    <h3 class="font-medium text-gray-900">Invite Team</h3>
+                                    <p class="text-sm text-gray-600 mt-1">Add collaborators</p>
+                                </div>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Page Builder Preview -->
+            <div class="bg-white rounded-lg border border-gray-200 mb-8">
+                <div class="p-6 border-b border-gray-200">
+                    <div class="flex items-center justify-between">
+                        <h2 class="text-lg font-semibold text-gray-900">Page Builder Preview</h2>
+                        <button class="px-4 py-2 text-sm font-medium text-white bg-primary rounded-lg hover:bg-primary/90">
+                            <i class="fas fa-edit mr-2"></i>
+                            Open Builder
+                        </button>
+                    </div>
+                </div>
+                <div class="p-6">
+                    <!-- @FUNCTIONALITY: This should show a preview of the drag-and-drop page builder -->
+                    <div class="border-2 border-dashed border-gray-300 rounded-lg p-8 bg-gray-50">
+                        <div class="text-center">
+                            <div class="w-16 h-16 bg-primary/10 rounded-lg flex items-center justify-center mx-auto mb-4">
+                                <i class="fas fa-edit text-primary text-2xl"></i>
+                            </div>
+                            <h3 class="text-lg font-medium text-gray-900 mb-2">Visual Page Builder</h3>
+                            <p class="text-gray-600 mb-4">Drag and drop portlets to build your pages visually</p>
+                            
+                            <!-- Mock Builder Interface -->
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
+                                <div class="bg-white p-4 rounded-lg border border-gray-200 shadow-sm">
+                                    <div class="flex items-center space-x-3 mb-3">
+                                        <i class="fas fa-align-left text-gray-400"></i>
+                                        <span class="font-medium text-gray-900">Content Display</span>
+                                    </div>
+                                    <div class="text-sm text-gray-600">Rich text and HTML content portlet</div>
+                                </div>
+                                
+                                <div class="bg-white p-4 rounded-lg border border-gray-200 shadow-sm">
+                                    <div class="flex items-center space-x-3 mb-3">
+                                        <i class="fas fa-images text-gray-400"></i>
+                                        <span class="font-medium text-gray-900">Media Gallery</span>
+                                    </div>
+                                    <div class="text-sm text-gray-600">Image and video display portlet</div>
+                                </div>
+                                
+                                <div class="bg-white p-4 rounded-lg border border-gray-200 shadow-sm">
+                                    <div class="flex items-center space-x-3 mb-3">
+                                        <i class="fas fa-wpforms text-gray-400"></i>
+                                        <span class="font-medium text-gray-900">Contact Form</span>
+                                    </div>
+                                    <div class="text-sm text-gray-600">Custom form builder portlet</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Service Builder Demo -->
+            <div class="bg-white rounded-lg border border-gray-200">
+                <div class="p-6 border-b border-gray-200">
+                    <div class="flex items-center justify-between">
+                        <h2 class="text-lg font-semibold text-gray-900">Service Builder</h2>
+                        <span class="px-2 py-1 text-xs font-medium bg-accent/10 text-accent rounded">Advanced Feature</span>
+                    </div>
+                </div>
+                <div class="p-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <h3 class="font-medium text-gray-900 mb-3">Auto-Generated CRUD</h3>
+                            <div class="space-y-3">
+                                <div class="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg">
+                                    <i class="fas fa-database text-primary"></i>
+                                    <div>
+                                        <div class="font-medium text-gray-900">JobBoard Schema</div>
+                                        <div class="text-sm text-gray-600">Auto-generated APIs + Admin UI</div>
+                                    </div>
+                                </div>
+                                <div class="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg">
+                                    <i class="fas fa-shopping-cart text-accent"></i>
+                                    <div>
+                                        <div class="font-medium text-gray-900">Product Catalog</div>
+                                        <div class="text-sm text-gray-600">E-commerce data management</div>
+                                    </div>
+                                </div>
+                                <div class="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg">
+                                    <i class="fas fa-calendar text-success"></i>
+                                    <div>
+                                        <div class="font-medium text-gray-900">Event Manager</div>
+                                        <div class="text-sm text-gray-600">Event scheduling system</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div>
+                            <h3 class="font-medium text-gray-900 mb-3">Generated Components</h3>
+                            <div class="text-sm text-gray-600 space-y-2">
+                                <div class="flex items-center space-x-2">
+                                    <i class="fas fa-check text-success"></i>
+                                    <span>REST API Endpoints</span>
+                                </div>
+                                <div class="flex items-center space-x-2">
+                                    <i class="fas fa-check text-success"></i>
+                                    <span>Admin Table Interface</span>
+                                </div>
+                                <div class="flex items-center space-x-2">
+                                    <i class="fas fa-check text-success"></i>
+                                    <span>Form Validation</span>
+                                </div>
+                                <div class="flex items-center space-x-2">
+                                    <i class="fas fa-check text-success"></i>
+                                    <span>Search & Filtering</span>
+                                </div>
+                                <div class="flex items-center space-x-2">
+                                    <i class="fas fa-check text-success"></i>
+                                    <span>Relationship Management</span>
+                                </div>
+                            </div>
+                            <button class="mt-4 px-4 py-2 text-sm font-medium text-primary border border-primary rounded-lg hover:bg-primary hover:text-white transition-colors">
+                                Try Service Builder
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+        <!-- @END_COMPONENT: MainContent -->
+    </div>
+    
+    <!-- @COMPONENT: CreateProjectModal -->
+    <div id="createProjectModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-lg p-6 w-full max-w-md mx-4">
+            <div class="flex items-center justify-between mb-6">
+                <h3 class="text-lg font-semibold text-gray-900">Create New Project</h3>
+                <button class="text-gray-400 hover:text-gray-600">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <form class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Project Name</label>
+                    <input type="text" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary" placeholder="Enter project name">
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Project Type</label>
+                    <select class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary">
+                        <option>Website</option>
+                        <option>Portal</option>
+                        <option>Intranet</option>
+                        <option>Dashboard</option>
+                        <option>Application</option>
+                    </select>
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Description</label>
+                    <textarea class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary" rows="3" placeholder="Brief project description"></textarea>
+                </div>
+                
+                <div class="flex justify-end space-x-3 mt-6">
+                    <button type="button" class="px-4 py-2 text-sm font-medium text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50">
+                        Cancel
+                    </button>
+                    <button type="submit" class="px-4 py-2 text-sm font-medium text-white bg-primary rounded-lg hover:bg-primary/90">
+                        Create Project
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <!-- @END_COMPONENT: CreateProjectModal -->
+    
+    <script>
+        // TODO: Implement business logic, API calls, and state management
+        (function() {
+            'use strict';
+            
+            // Mock data for demonstration
+            const mockData = {
+                user: {
+                    name: 'John Doe',
+                    initials: 'JD',
+                    avatar: null
+                },
+                currentWorkspace: {
+                    name: 'Enterprise Corp',
+                    id: 'enterprise-corp'
+                },
+                stats: {
+                    activeProjects: 5,
+                    totalPages: 24,
+                    activePortlets: 47,
+                    teamMembers: 12
+                }
+            };
+            
+            // Simple dropdown toggle functionality
+            function toggleDropdown(dropdownId) {
+                const dropdown = document.getElementById(dropdownId);
+                if (dropdown) {
+                    dropdown.classList.toggle('hidden');
+                }
+            }
+            
+            // Event listeners for interactive elements
+            document.addEventListener('click', function(event) {
+                // Close dropdowns when clicking outside
+                if (!event.target.closest('[data-event*="toggleWorkspaceDropdown"]')) {
+                    const workspaceDropdown = document.getElementById('workspaceDropdown');
+                    if (workspaceDropdown && !workspaceDropdown.classList.contains('hidden')) {
+                        workspaceDropdown.classList.add('hidden');
+                    }
+                }
+                
+                // Handle dropdown toggles
+                if (event.target.closest('[data-event*="toggleWorkspaceDropdown"]')) {
+                    toggleDropdown('workspaceDropdown');
+                }
+            });
+            
+            // Initialize tooltips and interactive elements
+            document.addEventListener('DOMContentLoaded', function() {
+                // Add hover effects to interactive elements
+                const interactiveElements = document.querySelectorAll('[data-event]');
+                interactiveElements.forEach(element => {
+                    element.style.cursor = 'pointer';
+                });
+            });
+            
+        })();
+    </script>
+</body>
+</html>
