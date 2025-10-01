@@ -40,8 +40,11 @@ app.use((req, res, next) => {
 (async () => {
   const server = await registerRoutes(app);
   
-  // Initialize built-in portlets
-  await seedBuiltInPortlets();
+  // Initialize built-in portlets (non-blocking)
+  seedBuiltInPortlets().catch((error) => {
+    log(`Warning: Could not seed built-in portlets: ${error.message}`);
+    log('Application will continue to run, but database may need attention');
+  });
 
   app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
     const status = err.status || err.statusCode || 500;
